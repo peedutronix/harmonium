@@ -2,6 +2,7 @@
   "name": "harmonium",
   "version": "1.8.1",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "author": "Play Harmonium",
   "homepage": "https://playharmonium.com",
   "repository": {
@@ -159,7 +160,7 @@
     "ffmpeg-static": "^5.3.0",
     "lamejs": "^1.2.1",
     "postcss": "^8.5.6",
-    "prettier": "^3.6.2",
+    "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "tailwindcss": "^4",
     "tsx": "^4.20.3",
@@ -168,9 +169,18 @@
     "wrangler": "^4.34.0"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "ffmpeg-static",
+      "sharp",
+      "unrs-resolver",
+      "workerd"
+    ],
     "overrides": {
       "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2"
+      "@types/react-dom": "19.2.2",
+      "baseline-browser-mapping": "^2.8.18"
     }
   }
 }
