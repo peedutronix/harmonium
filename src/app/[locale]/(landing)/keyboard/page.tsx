@@ -6,7 +6,7 @@ import { getMetadata } from '@/shared/lib/seo';
 export const revalidate = 3600;
 
 export const generateMetadata = getMetadata({
-  title: 'Web Harmonium Keyboard | Practice Mode',
+  title: 'Play Harmonium Keyboard | Practice Mode',
   description:
     'Open a focused harmonium practice page with touch controls, keyboard shortcuts, Sargam labels, octave switching, and transpose.',
   keywords:

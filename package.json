@@ -1,12 +1,12 @@
 {
-  "name": "web-harmonium",
+  "name": "harmonium",
   "version": "1.8.1",
   "private": true,
-  "author": "Web Harmonium",
-  "homepage": "https://web-harmonium.com",
+  "author": "Play Harmonium",
+  "homepage": "https://playharmonium.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/web-harmonium"
+    "url": "https://github.com/bikai9289/Harmonium.git"
   },
   "keywords": [
     "web-harmonium",

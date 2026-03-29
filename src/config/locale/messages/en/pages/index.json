@@ -26,7 +26,7 @@
         "show_avatars": false,
         "background_image": {
           "src": "/preview.png",
-          "alt": "Web Harmonium"
+          "alt": "Play Harmonium"
         }
       },
       "features": {
@@ -86,3 +86,4 @@
     }
   }
 }
+

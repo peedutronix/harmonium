@@ -1,14 +1,14 @@
 {
   "metadata": {
     "title": "Use Cases",
-    "description": "See how Web Harmonium fits practice sessions, lessons, and quick idea capture."
+    "description": "See how Play Harmonium fits practice sessions, lessons, and quick idea capture."
   },
   "page": {
     "title": "Use Cases",
     "sections": {
       "showcases": {
         "id": "showcases",
-        "title": "Practice flows Web Harmonium is built for",
+        "title": "Practice flows Play Harmonium is built for",
         "description": "A light tool can still serve serious daily use when the workflow is clear.",
         "groups": [
           {
@@ -36,7 +36,7 @@
             "target": "_self",
             "image": {
               "src": "/preview.png",
-              "alt": "Web Harmonium daily practice"
+              "alt": "Play Harmonium daily practice"
             },
             "group": "practice"
           },
@@ -47,7 +47,7 @@
             "target": "_self",
             "image": {
               "src": "/preview.png",
-              "alt": "Web Harmonium lesson support"
+              "alt": "Play Harmonium lesson support"
             },
             "group": "teaching"
           },
@@ -58,7 +58,7 @@
             "target": "_self",
             "image": {
               "src": "/preview.png",
-              "alt": "Web Harmonium vocal warm-up"
+              "alt": "Play Harmonium vocal warm-up"
             },
             "group": "warmup"
           }
@@ -67,3 +67,4 @@
     }
   }
 }
+

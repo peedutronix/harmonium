@@ -1,10 +1,10 @@
 {
   "header": {
     "brand": {
-      "title": "videoPromp",
+      "title": "Play Harmonium",
       "logo": {
         "src": "/logo.png",
-        "alt": "videoPromp"
+        "alt": "Play Harmonium"
       },
       "url": "/admin"
     },
@@ -131,26 +131,8 @@
         },
         {
           "title": "GitHub",
-          "url": "https://github.com/your-app-name",
+          "url": "https://github.com/bikai9289/Harmonium",
           "icon": "Github",
-          "target": "_blank"
-        },
-        {
-          "title": "Twitter",
-          "url": "https://twitter.com/your-app-name",
-          "icon": "RiTwitterXFill",
-          "target": "_blank"
-        },
-        {
-          "title": "Discord",
-          "url": "https://discord.gg/your-app-name",
-          "icon": "RiDiscordFill",
-          "target": "_blank"
-        },
-        {
-          "title": "Email",
-          "url": "mailto:support@your-domain.com",
-          "icon": "Mail",
           "target": "_blank"
         }
       ]

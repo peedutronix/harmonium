@@ -21,7 +21,7 @@ export type ConfigMap = Record<string, string>;
 
 export const envConfigs: ConfigMap = {
   app_url: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
-  app_name: process.env.NEXT_PUBLIC_APP_NAME ?? 'Web Harmonium',
+  app_name: process.env.NEXT_PUBLIC_APP_NAME ?? 'Play Harmonium',
   app_description:
     process.env.NEXT_PUBLIC_APP_DESCRIPTION ??
     'Practice harmonium online with keyboard shortcuts, touch controls, and Sargam labels.',

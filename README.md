@@ -1,20 +1,35 @@
-# ShipAny Template Two
+﻿# Play Harmonium
 
-## Getting Started
+Play Harmonium is a browser-based harmonium practice site built on top of a modern Next.js SaaS template. The project focuses on fast online play, SEO-friendly landing pages, blog content, and room for future premium features.
 
-read [ShipAny Document](https://shipany.ai/docs/quick-start) to start your AI SaaS project.
+## Core Features
 
-## Buy Templates
+- Play harmonium online with keyboard shortcuts and touch input
+- Switch between Sargam and Western note labels
+- Adjust octave, transpose, and volume in the browser
+- Blog, pricing, auth, admin, and settings pages ready for expansion
+- Postgres-backed auth and RBAC support from the template foundation
 
-check [ShipAny Templates](https://shipany.ai/templates) to buy Business Templates.
+## Local Development
 
-## Feedback
+1. Install dependencies with `pnpm install`
+2. Start PostgreSQL and set `DATABASE_URL`
+3. Run `pnpm db:push`
+4. Seed defaults with `pnpm rbac:init` and `pnpm config:init`
+5. Start the app with `pnpm dev`
 
-submit your feedbacks on [Github Issues](https://github.com/shipanyai/shipany-template-two/issues)
+## Environment Files
 
-## LICENSE
+- Local development: `D:\bikai\saas\harmonium\.env.development`
+- Production values: `D:\bikai\saas\harmonium\.env.production`
+- Shared example: `D:\bikai\saas\harmonium\.env.example`
 
-!!! Please do not publicly release ShipAny's Code. Illegal use will be prosecuted
+## Deployment
 
-[ShipAny LICENSE](./LICENSE)
+- Production domain: [playharmonium.com](https://playharmonium.com)
+- GitHub repository: [bikai9289/Harmonium](https://github.com/bikai9289/Harmonium)
+- Recommended hosting: Vercel
 
+## Docs
+
+Project planning, setup notes, and test logs live under `D:\bikai\saas\harmonium\doc`.

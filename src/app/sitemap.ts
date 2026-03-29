@@ -2,7 +2,16 @@ import { MetadataRoute } from 'next';
 
 import { envConfigs } from '@/config';
 
-const staticRoutes = ['/', '/keyboard', '/blog', '/pricing', '/showcases', '/updates'];
+const staticRoutes = [
+  '/',
+  '/keyboard',
+  '/blog',
+  '/pricing',
+  '/showcases',
+  '/updates',
+  '/privacy-policy',
+  '/terms-of-service',
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const appUrl = envConfigs.app_url.replace(/\/$/, '');

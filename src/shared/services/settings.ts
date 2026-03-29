@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+﻿import { getTranslations } from 'next-intl/server';
 
 import { Tab } from '@/shared/types/blocks/common';
 
@@ -287,7 +287,7 @@ export async function getSettings() {
     {
       name: 'app_name',
       title: 'App Name',
-      placeholder: 'Web Harmonium',
+      placeholder: 'Play Harmonium',
       type: 'text',
       group: 'appinfo',
       tab: 'general',
@@ -680,7 +680,7 @@ export async function getSettings() {
       name: 'plausible_domain',
       title: 'Plausible Domain',
       type: 'text',
-      placeholder: 'web-harmonium.com',
+      placeholder: 'playharmonium.com',
       group: 'plausible',
       tab: 'analytics',
     },
@@ -720,7 +720,7 @@ export async function getSettings() {
       name: 'resend_sender_email',
       title: 'Resend Sender Email',
       type: 'text',
-      placeholder: 'Web Harmonium <no-reply@example.com>',
+      placeholder: 'Play Harmonium <no-reply@playharmonium.com>',
       group: 'resend',
       tab: 'email',
     },
@@ -978,6 +978,7 @@ export async function getAllSettingNames() {
 
   return settingNames;
 }
+
 
 
 
