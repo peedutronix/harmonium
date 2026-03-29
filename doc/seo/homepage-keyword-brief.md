@@ -53,7 +53,7 @@ They usually do not want:
 
 ## Homepage angle
 
-Position Web Harmonium as:
+Position Play Harmonium as:
 
 `A fast, browser-based harmonium practice tool with keyboard shortcuts, touch controls, Sargam labels, and no download requirement.`
 
@@ -61,7 +61,7 @@ Position Web Harmonium as:
 
 Homepage title direction:
 
-- `Play Harmonium Online | Web Harmonium`
+- `Play Harmonium Online | Play Harmonium`
 
 Homepage description direction:
 
@@ -69,7 +69,7 @@ Homepage description direction:
 
 Keyboard page title direction:
 
-- `Web Harmonium Keyboard | Practice Mode`
+- `Play Harmonium Keyboard | Practice Mode`
 
 ## Content requirements for `/`
 

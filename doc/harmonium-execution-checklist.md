@@ -20,7 +20,7 @@ Turn the existing SaaS template into a searchable, usable `web harmonium` MVP:
 - [x] Click / touch playback works
 - [x] Volume, octave, transpose controls work
 - [x] Western / Sargam label switching works
-- [x] Branding replaced with `Web Harmonium`
+- [x] Branding replaced with `Play Harmonium`
 - [x] Two initial SEO posts added
 - [x] Privacy policy and terms replaced
 - [x] RBAC initialized

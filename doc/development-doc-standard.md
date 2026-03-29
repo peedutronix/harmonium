@@ -1,4 +1,4 @@
-# Web Harmonium Development Doc Standard
+# Play Harmonium Development Doc Standard
 
 ## Goal
 
@@ -105,7 +105,7 @@ For anything involving SEO landing pages:
 - SEO brief
 - Internal link plan
 
-## Good defaults for Web Harmonium
+## Good defaults for Play Harmonium
 
 - Product docs should optimize for search intent first, SaaS expansion second.
 - UX notes should say what happens above the fold, what the primary CTA does, and where it scrolls.

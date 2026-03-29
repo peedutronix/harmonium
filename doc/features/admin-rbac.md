@@ -71,7 +71,7 @@ Keep `/admin` safe and predictable by ensuring:
 - [ ] Unauthenticated `/admin` access redirects to sign-in
 - [ ] Viewer can access `/admin/users`
 - [ ] Viewer is redirected from `/admin/roles` to `/admin/no-permission`
-- [ ] Admin layout branding reflects Web Harmonium config values
+- [ ] Admin layout branding reflects Play Harmonium config values
 - [ ] No admin route is publicly exposed without auth
 
 ## Risks

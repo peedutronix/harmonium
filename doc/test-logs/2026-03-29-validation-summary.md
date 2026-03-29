@@ -67,9 +67,9 @@ Verified public routes:
 Verified route split:
 
 - homepage title:
-  `Play Harmonium Online | Web Harmonium`
+  `Play Harmonium Online | Play Harmonium`
 - keyboard page title:
-  `Web Harmonium Keyboard | Practice Mode`
+  `Play Harmonium Keyboard | Practice Mode`
 - `/` and `/keyboard` do not return the same HTML
 
 ## UI verification

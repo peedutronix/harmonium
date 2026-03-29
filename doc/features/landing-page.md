@@ -8,7 +8,7 @@ The project has already moved away from a generic AI SaaS homepage and now uses 
 
 Make `/` a clear SEO-first product homepage that:
 
-- explains what Web Harmonium is
+- explains what Play Harmonium is
 - matches the `web harmonium` / `online harmonium` query intent
 - routes users cleanly into `/keyboard`
 - supports future growth into blog, pricing, and light SaaS features

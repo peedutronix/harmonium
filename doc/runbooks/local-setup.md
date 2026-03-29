@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Get the Web Harmonium project running locally with database, RBAC, seeded config, and route verification.
+Get the Play Harmonium project running locally with database, RBAC, seeded config, and route verification.
 
 ## Prerequisites
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This runbook explains how to enable Google Search Console verification and optional analytics providers for Web Harmonium.
+This runbook explains how to enable Google Search Console verification and optional analytics providers for Play Harmonium.
 
 ## Search Console Verification
 
