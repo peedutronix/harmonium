@@ -17,7 +17,7 @@ enabled = true
 
 [vars]
 # app
-NEXT_PUBLIC_APP_URL = "http://localhost:3000"
+NEXT_PUBLIC_APP_URL = "https://playharmonium.com"
 NEXT_PUBLIC_APP_NAME = "Play Harmonium"
 NEXT_PUBLIC_APP_DESCRIPTION = "Practice harmonium online with keyboard shortcuts, touch controls, and Sargam labels."
 NEXT_PUBLIC_APP_LOGO = "/logo.png"

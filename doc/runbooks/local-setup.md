@@ -88,8 +88,8 @@ Start on another port:
 
 ```powershell
 $env:PORT="3003"
-$env:NEXT_PUBLIC_APP_URL="http://localhost:3003"
-$env:AUTH_URL="http://localhost:3003"
+$env:NEXT_PUBLIC_APP_URL="https://playharmonium.com"
+$env:AUTH_URL="https://playharmonium.com"
 pnpm start
 ```
 
