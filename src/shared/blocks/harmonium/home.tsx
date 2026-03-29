@@ -158,14 +158,14 @@ export function HarmoniumHome({
                 asChild
                 className="bg-[#1f6b64] px-5 text-white hover:bg-[#17544f]"
               >
-                <Link href="/keyboard" title="Open the web harmonium keyboard">{copy.primaryCta}</Link>
+                <Link href="/keyboard" title="Open the Web Harmonium keyboard">{copy.primaryCta}</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 className="border-[#b77c4a]/30 bg-white/75 px-5 text-[#7f4e2a]"
               >
-                <Link href="/blog" title="Read web harmonium guides and tips">{copy.secondaryCta}</Link>
+                <Link href="/blog" title="Read Web Harmonium guides and tips">{copy.secondaryCta}</Link>
               </Button>
             </div>
 
@@ -406,10 +406,10 @@ export function HarmoniumHome({
               Search intent overview
             </p>
             <h2 className="text-3xl font-semibold text-balance sm:text-4xl">
-              What people mean when they search web harmonium
+              What people mean when they search Web Harmonium
             </h2>
             <p className="max-w-xl text-lg leading-8 text-slate-700">
-              Most users searching for web harmonium do not want a gated app.
+              Most users searching for Web Harmonium do not want a gated app.
               They want a browser instrument that opens fast, plays notes
               immediately, and explains the layout clearly enough for practice.
             </p>
@@ -421,7 +421,7 @@ export function HarmoniumHome({
                 Play harmonium online without downloads
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                A useful web harmonium should load in one tab, support touch and
+                A useful Web Harmonium should load in one tab, support touch and
                 keyboard input, and let beginners start with the visible middle
                 octave instead of forcing account setup first.
               </p>
@@ -444,7 +444,7 @@ export function HarmoniumHome({
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">
                 The dedicated keyboard route gives search engines and users a
-                clearer destination for phrases like web harmonium keyboard,
+                clearer destination for phrases like Web Harmonium keyboard,
                 practice harmonium online, and virtual harmonium keyboard.
               </p>
             </div>
@@ -454,7 +454,7 @@ export function HarmoniumHome({
                 Support the homepage with specific guides
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                Supporting articles like how to play web harmonium online and
+                Supporting articles like how to play Web Harmonium online and
                 beginner keyboard-note explainers help the homepage rank for the
                 main term while the blog absorbs longer-tail searches.
               </p>
