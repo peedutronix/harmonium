@@ -71,3 +71,4 @@ src/config/db/migrations*
 .codex-*.log
 .codex-*.err.log
 download/
+doc/
