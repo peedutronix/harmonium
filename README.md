@@ -1,26 +1,29 @@
-# Play Web Harmonium
+# PlayHarmonium
 
-Play Web Harmonium is a browser-based **Web Harmonium** built for daily practice. It helps users play Web Harmonium online with keyboard shortcuts, touch controls, Sargam labels, octave switching, transpose, and beginner-friendly guides.
+PlayHarmonium is a free web harmonium for browser-based practice. It gives learners a clean keyboard layout with touch controls, computer-key shortcuts, Sargam labels, transpose, and beginner-friendly guides without making them install anything first.
 
-[Visit Website](https://playharmonium.com/) | [Open Keyboard](https://playharmonium.com/keyboard) | [Read the Blog](https://playharmonium.com/blog)
+[PlayHarmonium](https://playharmonium.com/) | [Feature overview](https://playharmonium.com/#features)
+
+![PlayHarmonium keyboard preview](public/github-preview.png)
 
 ## Why This Project Exists
 
-People searching for **Web Harmonium** usually want a playable instrument in the browser, not a gated SaaS homepage. This project is designed to match that intent: load fast, let people start playing immediately, and support the tool with SEO-friendly educational content.
+Most people searching for an online harmonium want to start playing right away, not land on a generic marketing page. This project keeps the instrument front and center while still supporting tutorials, blog content, and future product expansion.
 
 ## What You Can Do
 
-- Play Web Harmonium online without installing software
-- Use keyboard shortcuts or touch controls
-- Switch between Sargam and Western note labels
-- Adjust octave, transpose, and volume in the browser
-- Read Web Harmonium guides and beginner articles
-- Extend the project later with auth, pricing, admin, and premium features
+- Play a full browser harmonium without installing software
+- Use touch controls, keyboard shortcuts, or Web MIDI input
+- Switch between Sargam and western note labels
+- Adjust octave, transpose, and volume for daily practice
+- Open a focused keyboard page for distraction-free sessions
+- Read beginner guides that explain notes, layout, and practice flow
 
 ## Product Pages
 
-- Homepage: [https://playharmonium.com/](https://playharmonium.com/)
+- Website: [https://playharmonium.com/](https://playharmonium.com/)
 - Keyboard page: [https://playharmonium.com/keyboard](https://playharmonium.com/keyboard)
+- Beginner guide: [https://playharmonium.com/blog/harmonium-keyboard-notes-for-beginners](https://playharmonium.com/blog/harmonium-keyboard-notes-for-beginners)
 - Blog: [https://playharmonium.com/blog](https://playharmonium.com/blog)
 
 ## Tech Stack
@@ -49,4 +52,4 @@ People searching for **Web Harmonium** usually want a playable instrument in the
 
 ## Docs
 
-Project planning, setup notes, and test logs live under [`doc/`](./doc).
+Project planning, setup notes, and test logs live under `doc/` locally and are not committed to this repository.
