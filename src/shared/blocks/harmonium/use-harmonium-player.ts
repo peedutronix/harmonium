@@ -16,8 +16,6 @@ const REFERENCE_SAMPLE_URL = '/harmonium-kannan-orig.wav';
 const REFERENCE_REVERB_URL = '/reverb.wav';
 const REFERENCE_ROOT_MIDI = 62;
 const REFERENCE_LOOP_START = 0.5;
-const PIANO_SAMPLE_URL = 'https://tonejs.github.io/audio/salamander/C4.mp3';
-const PIANO_ROOT_MIDI = 60;
 
 async function fetchAudioBuffer(context: AudioContext, url: string) {
   const response = await fetch(url, { cache: 'force-cache' }).catch(() => null);
@@ -52,27 +50,6 @@ function createReferenceSource({
   return source;
 }
 
-function createPianoReferenceSource({
-  buffer,
-  context,
-  destination,
-  midi,
-}: {
-  buffer: AudioBuffer;
-  context: AudioContext;
-  destination: AudioNode;
-  midi: number;
-}) {
-  const source = context.createBufferSource();
-  source.buffer = buffer;
-  source.loop = false;
-  source.detune.value = (midi - PIANO_ROOT_MIDI) * 100;
-  source.connect(destination);
-  source.start(0);
-
-  return source;
-}
-
 function createFallbackSource({
   context,
   destination,
@@ -99,14 +76,12 @@ export function useHarmoniumPlayer({
   volume,
   reverbEnabled,
   reedMode,
-  instrument = 'harmonium',
 }: {
   octave: number;
   transpose: number;
   volume: number;
   reverbEnabled: boolean;
   reedMode: ReedMode;
-  instrument?: 'harmonium' | 'piano';
 }) {
   const [activeNoteIds, setActiveNoteIds] = useState<string[]>([]);
   const [playbackMode, setPlaybackMode] = useState<PlaybackMode>('samples');
@@ -120,7 +95,6 @@ export function useHarmoniumPlayer({
   const sustainEnabledRef = useRef(false);
   const sustainedVoiceIdsRef = useRef<Set<string>>(new Set());
   const sampleBufferPromiseRef = useRef<Promise<AudioBuffer | null> | null>(null);
-  const pianoSamplePromiseRef = useRef<Promise<AudioBuffer | null> | null>(null);
   const reverbBufferPromiseRef = useRef<Promise<AudioBuffer | null> | null>(null);
   const settingsRef = useRef({
     octave,
@@ -128,7 +102,6 @@ export function useHarmoniumPlayer({
     volume,
     reverbEnabled,
     reedMode,
-    instrument,
   });
 
   const syncReverbRoute = useCallback((enabled: boolean) => {
@@ -162,7 +135,6 @@ export function useHarmoniumPlayer({
       volume,
       reverbEnabled,
       reedMode,
-      instrument,
     };
 
     const context = audioContextRef.current;
@@ -218,13 +190,6 @@ export function useHarmoniumPlayer({
     }
 
     return sampleBufferPromiseRef.current;
-  }, []);
-
-  const loadPianoSample = useCallback(async (context: AudioContext) => {
-    if (!pianoSamplePromiseRef.current) {
-      pianoSamplePromiseRef.current = fetchAudioBuffer(context, PIANO_SAMPLE_URL).catch(() => null);
-    }
-    return pianoSamplePromiseRef.current;
   }, []);
 
   const loadReferenceReverb = useCallback(
@@ -338,13 +303,7 @@ export function useHarmoniumPlayer({
       voiceGain.gain.value = velocity;
       voiceGain.connect(gainNode);
 
-      let sampleBuffer: AudioBuffer | null = null;
-      let pianoSampleBuffer: AudioBuffer | null = null;
-      if (settingsRef.current.instrument === 'piano') {
-        pianoSampleBuffer = await loadPianoSample(context);
-      } else {
-        sampleBuffer = await loadReferenceSample(context);
-      }
+      const sampleBuffer = await loadReferenceSample(context);
 
       if (
         voicesRef.current.has(voiceId) ||
@@ -356,37 +315,7 @@ export function useHarmoniumPlayer({
 
       const sources: AudioScheduledSourceNode[] = [];
 
-      if (settingsRef.current.instrument === 'piano') {
-        const t = context.currentTime;
-        if (pianoSampleBuffer) {
-           sources.push(createPianoReferenceSource({ buffer: pianoSampleBuffer, context, destination: voiceGain, midi: desiredMidi }));
-           
-           voiceGain.gain.setValueAtTime(0, t);
-           voiceGain.gain.linearRampToValueAtTime(velocity * 1.5, t + 0.01);
-           
-           setPlaybackMode('samples');
-        } else {
-            const frequency = 440 * 2 ** ((desiredMidi - 69) / 12);
-            const osc1 = createFallbackSource({ context, destination: voiceGain, frequency, type: 'sine' });
-            const osc2 = context.createOscillator();
-            osc2.type = 'triangle';
-            osc2.frequency.value = frequency;
-            const gain2 = context.createGain();
-            const filter2 = context.createBiquadFilter();
-            filter2.type = 'lowpass';
-            filter2.frequency.setValueAtTime(frequency * 3, t);
-            filter2.frequency.exponentialRampToValueAtTime(frequency, t + 0.5);
-            osc2.connect(filter2); filter2.connect(gain2); gain2.connect(voiceGain);
-            osc2.start(t);
-            
-            sources.push(osc1, osc2);
-            voiceGain.gain.setValueAtTime(0, t);
-            voiceGain.gain.linearRampToValueAtTime(velocity * 1.5, t + 0.01);
-            voiceGain.gain.exponentialRampToValueAtTime(0.001, t + 3.0);
-            
-            setPlaybackMode('oscillator');
-        }
-      } else if (sampleBuffer) {
+      if (sampleBuffer) {
         sources.push(
           createReferenceSource({
             buffer: sampleBuffer,

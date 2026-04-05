@@ -97,7 +97,6 @@ export function ImmersiveHarmonium() {
   const [volume, setVolume] = useState(0.5);
   const [reverbEnabled, setReverbEnabled] = useState(false);
   const [reedMode, setReedMode] = useState<'single' | 'double'>('single');
-  const [instrument, setInstrument] = useState<'harmonium' | 'piano'>('harmonium');
   const [showControls, setShowControls] = useState(false);
   const [showZoom, setShowZoom] = useState(false);
   const [showWebcam, setShowWebcam] = useState(false);
@@ -228,7 +227,7 @@ export function ImmersiveHarmonium() {
   }, [showWebcam]);
 
   const { activeNoteIds, playbackMode, startNote: baseStartNote, stopNote: baseStopNote, stopAllNotes, startMidiNote, stopMidiNote } =
-    useHarmoniumPlayer({ octave, transpose, volume, reverbEnabled, reedMode, instrument });
+    useHarmoniumPlayer({ octave, transpose, volume, reverbEnabled, reedMode });
 
   // ── Coupler Logic ────────────────────────────────────────────────────────
   const noteById = useMemo(() => new Map(NOTE_KEYS.map((n) => [n.id, n])), []);
@@ -951,13 +950,6 @@ export function ImmersiveHarmonium() {
             <HUDRow label="Keyboard Labels">
               {([{ label: 'None', v: 'none' as const }, { label: 'Sargam', v: 'sargam' as const }, { label: 'Western', v: 'western' as const }]).map((o) => (
                 <HUDChip key={o.label} active={labelMode === o.v} color="amber" onClick={() => setLabelMode(o.v)}>
-                  {o.label}
-                </HUDChip>
-              ))}
-            </HUDRow>
-            <HUDRow label="Instrument">
-              {([{ label: 'Harmonium', v: 'harmonium' as const }, { label: 'Piano', v: 'piano' as const }]).map((o) => (
-                <HUDChip key={o.label} active={instrument === o.v} color="amber" onClick={() => setInstrument(o.v)}>
                   {o.label}
                 </HUDChip>
               ))}
