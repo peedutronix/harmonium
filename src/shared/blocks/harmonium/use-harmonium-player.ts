@@ -448,5 +448,7 @@ export function useHarmoniumPlayer({
     startNote: wrappedStartNote,
     stopNote: wrappedStopNote,
     stopAllNotes,
+    getAudioContext: () => audioContextRef.current,
+    getGainNode: () => gainNodeRef.current,
   };
 }

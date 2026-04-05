@@ -124,11 +124,34 @@ export function ImmersiveHarmonium() {
 
   const startRecording = async () => {
     try {
-      const stream = await (navigator.mediaDevices as any).getDisplayMedia({
+      // 1. Capture the screen (video only — no system audio needed)
+      const displayStream = await (navigator.mediaDevices as any).getDisplayMedia({
         video: { displaySurface: 'browser' },
-        audio: true
+        audio: false // we will add Web Audio manually
       });
-      const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+      // 2. Tap into the Web Audio engine output via MediaStreamDestination
+      const audioCtx = getAudioContext();
+      const gainNode = getGainNode();
+      
+      let audioTracks: MediaStreamTrack[] = [];
+      if (audioCtx && gainNode) {
+        const dest = audioCtx.createMediaStreamDestination();
+        gainNode.connect(dest);
+        audioTracks = dest.stream.getAudioTracks();
+      }
+
+      // 3. Combine video track + Web Audio track into one stream
+      const combinedStream = new MediaStream([
+        ...displayStream.getVideoTracks(),
+        ...audioTracks,
+      ]);
+
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+        ? 'video/webm;codecs=vp9,opus'
+        : 'video/webm';
+
+      const recorder = new MediaRecorder(combinedStream, { mimeType });
       
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) recordedChunksRef.current.push(e.data);
@@ -143,20 +166,18 @@ export function ImmersiveHarmonium() {
         URL.revokeObjectURL(url);
         recordedChunksRef.current = [];
         setIsRecording(false);
-        stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
       };
 
-      stream.getVideoTracks()[0].onended = () => {
-        if (recorder.state === 'recording') recorder.stop();
-      };
+      // Stop recording when user stops screen share
+      displayStream.getVideoTracks()[0]?.addEventListener('ended', () => {
+        if (recorder.state !== 'inactive') recorder.stop();
+      });
 
-      recordedChunksRef.current = [];
-      recorder.start(1000);
+      recorder.start(200); // collect data every 200ms
       mediaRecorderRef.current = recorder;
       setIsRecording(true);
     } catch (err) {
-      console.error('Failed to start recording:', err);
-      alert('Could not start screen capture. Please allow screen/audio sharing.');
+      console.error('Recording failed:', err);
     }
   };
 
@@ -226,7 +247,7 @@ export function ImmersiveHarmonium() {
     };
   }, [showWebcam]);
 
-  const { activeNoteIds, playbackMode, startNote: baseStartNote, stopNote: baseStopNote, stopAllNotes, startMidiNote, stopMidiNote } =
+  const { activeNoteIds, playbackMode, startNote: baseStartNote, stopNote: baseStopNote, stopAllNotes, startMidiNote, stopMidiNote, getAudioContext, getGainNode } =
     useHarmoniumPlayer({ octave, transpose, volume, reverbEnabled, reedMode });
 
   // ── Coupler Logic ────────────────────────────────────────────────────────
