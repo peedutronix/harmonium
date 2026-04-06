@@ -881,6 +881,21 @@ export function ImmersiveHarmonium() {
         <div className="relative z-10 flex-shrink-0" style={{ height: 34, background: 'linear-gradient(180deg,#3a1a08 0%,#5c2e0e 60%,#7c4520 100%)', boxShadow: '0 -6px 24px rgba(0,0,0,.7)' }}>
           <WoodGrain />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#8a6030,#c8a040,#8a6030)', opacity: .55 }} />
+          {/* Copyright notice — burned into the wood */}
+          <div style={{
+            position: 'absolute', bottom: 4, left: 0, right: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            pointerEvents: 'none', userSelect: 'none',
+          }}>
+            <span style={{
+              fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase',
+              color: 'rgba(220,160,60,.55)',
+              fontFamily: 'Georgia, serif',
+              textShadow: '0 1px 3px rgba(0,0,0,.9)',
+            }}>
+              © Sudeep Regmi · 9849489310 · All Rights Reserved
+            </span>
+          </div>
         </div>
 
         {/* ══ ZOOM CONTROLS ════════════════════════════════════════════ */}
