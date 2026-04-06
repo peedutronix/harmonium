@@ -111,12 +111,14 @@ export function ImmersiveHarmonium() {
   const [tanpuraRoot, setTanpuraRoot] = useState(0); // 0 = C
   const [tanpuraVolume, setTanpuraVolume] = useState(0.5);
   const [tanpuraSpeed, setTanpuraSpeed] = useState(120);
+  const [tanpuraExpanded, setTanpuraExpanded] = useState(false);
 
   const [tablaEnabled, setTablaEnabled] = useState(false);
   const [tablaTaal, setTablaTaal] = useState<keyof typeof TAALS>('tintal');
   const [tablaVolume, setTablaVolume] = useState(0.6);
   const [tablaSpeed, setTablaSpeed] = useState(160);
   const [tablaPitch, setTablaPitch] = useState(0);
+  const [tablaExpanded, setTablaExpanded] = useState(false);
 
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -968,6 +970,24 @@ export function ImmersiveHarmonium() {
               transform: showControls ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.97)',
               pointerEvents: showControls ? 'auto' : 'none',
             }}>
+            {/* ── Webcam — pinned at top so always accessible ── */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,160,50,.12)', marginBottom: 4 }}>
+              <span style={{ fontSize: 9, color: 'rgba(255,200,100,.5)', textTransform: 'uppercase', letterSpacing: '.1em' }}>Webcam Mirror</span>
+              <button
+                onClick={() => setShowWebcam(!showWebcam)}
+                style={{
+                  fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 20,
+                  background: showWebcam ? 'rgba(251,191,36,.85)' : 'rgba(255,255,255,.08)',
+                  color: showWebcam ? '#1a0a00' : 'rgba(255,200,100,.7)',
+                  border: showWebcam ? 'none' : '1px solid rgba(255,160,50,.2)',
+                  cursor: 'pointer', transition: 'all .15s'
+                }}
+              >
+                {showWebcam ? '📷 On' : '📷 Off'}
+              </button>
+            </div>
+
+            {/* ── Keyboard Labels ── */}
             <HUDRow label="Keyboard Labels">
               {([{ label: 'None', v: 'none' as const }, { label: 'Sargam', v: 'sargam' as const }, { label: 'Western', v: 'western' as const }]).map((o) => (
                 <HUDChip key={o.label} active={labelMode === o.v} color="amber" onClick={() => setLabelMode(o.v)}>
@@ -1000,102 +1020,111 @@ export function ImmersiveHarmonium() {
                 </HUDChip>
               ))}
             </HUDRow>
-            
-            <HUDRow label="Tanpura 🪕">
-              <HUDChip active={tanpuraEnabled} color="amber" onClick={() => setTanpuraEnabled(!tanpuraEnabled)}>
-                {tanpuraEnabled ? 'Playing' : 'Off'}
-              </HUDChip>
-              {tanpuraEnabled && (
-                <HUDChip active={tanpuraStyle==='pa'} color="teal" onClick={() => setTanpuraStyle('pa')}>Pa</HUDChip>
-              )}
-              {tanpuraEnabled && (
-                <HUDChip active={tanpuraStyle==='ma'} color="teal" onClick={() => setTanpuraStyle('ma')}>Ma</HUDChip>
-              )}
-              {tanpuraEnabled && (
-                <HUDChip active={tanpuraStyle==='ni'} color="teal" onClick={() => setTanpuraStyle('ni')}>Ni</HUDChip>
-              )}
-            </HUDRow>
-            
-            {tanpuraEnabled && (
-              <>
-                <HUDRow label="Tanpura Root Note">
-                  <div className="flex bg-[#111] p-1 border border-white/10 rounded-full w-full overflow-x-auto whitespace-nowrap hide-scrollbars">
-                    {WESTERN_NAMES.map((w, idx) => (
-                      <button 
-                        key={'tan-'+w} 
-                        onClick={() => setTanpuraRoot(idx)}
-                        className={cn(
-                          "px-2 py-0.5 text-[10px] rounded-full transition-colors flex-shrink-0",
-                          tanpuraRoot === idx ? "bg-amber-500/80 text-amber-950 font-bold" : "text-white/50 hover:bg-white/10"
-                        )}
-                      >
-                        {w}
-                      </button>
-                    ))}
-                  </div>
-                </HUDRow>
-                <HUDRow label={`Tanpura Volume`}>
-                  <input type="range" min="0.05" max="1.5" step="0.05" value={tanpuraVolume}
-                    onChange={(e) => setTanpuraVolume(Number(e.target.value))} className="flex-1 accent-amber-500" />
-                </HUDRow>
-                <HUDRow label={`Tanpura Speed (${tanpuraSpeed} BPM)`}>
-                  <input type="range" min="60" max="240" step="5" value={tanpuraSpeed}
-                    onChange={(e) => setTanpuraSpeed(Number(e.target.value))} className="flex-1 accent-teal-500" />
-                </HUDRow>
-              </>
-            )}
 
-            <HUDRow label="Tabla Machine 🥁">
-              <HUDChip active={tablaEnabled} color="amber" onClick={() => { setTablaEnabled(!tablaEnabled); tablaStateRef.current.beat = 0; }}>
-                {tablaEnabled ? 'Playing' : 'Off'}
-              </HUDChip>
-            </HUDRow>
-            
-            {tablaEnabled && (
-              <>
-                <HUDRow label="Select Taal">
-                  <div className="flex bg-[#111] p-1 border border-white/10 rounded-full w-full overflow-x-auto whitespace-nowrap hide-scrollbars">
-                    {(Object.entries(TAALS) as Array<[keyof typeof TAALS, typeof TAALS[keyof typeof TAALS]]>).map(([key, taal]) => (
-                      <button 
-                        key={key} 
-                        onClick={() => { setTablaTaal(key); tablaStateRef.current.beat = 0; }}
-                        className={cn(
-                          "px-2 py-0.5 text-[10px] rounded-full transition-colors flex-shrink-0",
-                          tablaTaal === key ? "bg-amber-500/80 text-amber-950 font-bold" : "text-white/50 hover:bg-white/10"
-                        )}
-                      >
-                        {taal.name}
-                      </button>
+            {/* ── Tanpura — collapsible ── */}
+            <div
+              style={{ background: tanpuraEnabled ? 'rgba(251,191,36,.06)' : 'transparent', borderRadius: 10, padding: '4px 6px', border: tanpuraEnabled ? '1px solid rgba(251,191,36,.15)' : '1px solid transparent', transition: 'all .2s' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }} onClick={() => setTanpuraExpanded(e => !e)}>
+                <span style={{ fontSize: 9, color: 'rgba(255,200,100,.5)', textTransform: 'uppercase', letterSpacing: '.1em', flex: 1 }}>Tanpura 🪕</span>
+                <button
+                  onClick={(ev) => { ev.stopPropagation(); setTanpuraEnabled(!tanpuraEnabled); }}
+                  style={{
+                    fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                    background: tanpuraEnabled ? 'rgba(251,191,36,.85)' : 'rgba(255,255,255,.08)',
+                    color: tanpuraEnabled ? '#1a0a00' : 'rgba(255,200,100,.7)',
+                    border: 'none', cursor: 'pointer', transition: 'all .15s'
+                  }}
+                >
+                  {tanpuraEnabled ? '● Playing' : '○ Off'}
+                </button>
+                <span style={{ fontSize: 10, color: 'rgba(255,200,100,.4)', transition: 'transform .2s', display: 'inline-block', transform: tanpuraExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+              </div>
+              {tanpuraExpanded && (
+                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <HUDRow label="String">
+                    {(['pa', 'ma', 'ni'] as const).map(s => (
+                      <HUDChip key={s} active={tanpuraStyle === s} color="teal" onClick={() => setTanpuraStyle(s)}>
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </HUDChip>
                     ))}
-                  </div>
-                </HUDRow>
-                <HUDRow label="Tabla Root Note">
-                  <div className="flex bg-[#111] p-1 border border-white/10 rounded-full w-full overflow-x-auto whitespace-nowrap hide-scrollbars">
-                    {WESTERN_NAMES.map((w, idx) => (
-                      <button 
-                        key={'tbl-'+w} 
-                        onClick={() => setTablaPitch(idx)}
-                        className={cn(
-                          "px-2 py-0.5 text-[10px] rounded-full transition-colors flex-shrink-0",
-                          tablaPitch === idx ? "bg-amber-500/80 text-amber-950 font-bold" : "text-white/50 hover:bg-white/10"
-                        )}
-                      >
-                        {w}
-                      </button>
-                    ))}
-                  </div>
-                </HUDRow>
-                <HUDRow label={`Tabla Volume`}>
-                  <input type="range" min="0" max="1.5" step="0.05" value={tablaVolume}
-                    onChange={(e) => setTablaVolume(Number(e.target.value))} className="flex-1 accent-amber-500" />
-                </HUDRow>
-                <HUDRow label={`Tabla Speed (${tablaSpeed} BPM)`}>
-                  <input type="range" min="60" max="280" step="5" value={tablaSpeed}
-                    onChange={(e) => setTablaSpeed(Number(e.target.value))} className="flex-1 accent-teal-500" />
-                </HUDRow>
-              </>
-            )}
-            
+                  </HUDRow>
+                  <HUDRow label="Root">
+                    <div className="flex bg-[#111] p-1 border border-white/10 rounded-full w-full overflow-x-auto whitespace-nowrap hide-scrollbars">
+                      {WESTERN_NAMES.map((w, idx) => (
+                        <button key={'tan-'+w} onClick={() => setTanpuraRoot(idx)}
+                          className={cn("px-2 py-0.5 text-[10px] rounded-full transition-colors flex-shrink-0",
+                            tanpuraRoot === idx ? "bg-amber-500/80 text-amber-950 font-bold" : "text-white/50 hover:bg-white/10")}
+                        >{w}</button>
+                      ))}
+                    </div>
+                  </HUDRow>
+                  <HUDRow label={`Vol ${Math.round(tanpuraVolume * 100)}%`}>
+                    <input type="range" min="0.05" max="1.5" step="0.05" value={tanpuraVolume}
+                      onChange={(e) => setTanpuraVolume(Number(e.target.value))} className="flex-1 accent-amber-500" />
+                  </HUDRow>
+                  <HUDRow label={`Speed ${tanpuraSpeed}`}>
+                    <input type="range" min="60" max="240" step="5" value={tanpuraSpeed}
+                      onChange={(e) => setTanpuraSpeed(Number(e.target.value))} className="flex-1 accent-teal-500" />
+                  </HUDRow>
+                </div>
+              )}
+            </div>
+
+            {/* ── Tabla — collapsible ── */}
+            <div
+              style={{ background: tablaEnabled ? 'rgba(20,184,166,.06)' : 'transparent', borderRadius: 10, padding: '4px 6px', border: tablaEnabled ? '1px solid rgba(20,184,166,.18)' : '1px solid transparent', transition: 'all .2s' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }} onClick={() => setTablaExpanded(e => !e)}>
+                <span style={{ fontSize: 9, color: 'rgba(255,200,100,.5)', textTransform: 'uppercase', letterSpacing: '.1em', flex: 1 }}>Tabla 🥁</span>
+                <button
+                  onClick={(ev) => { ev.stopPropagation(); setTablaEnabled(!tablaEnabled); tablaStateRef.current.beat = 0; }}
+                  style={{
+                    fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                    background: tablaEnabled ? 'rgba(20,184,166,.85)' : 'rgba(255,255,255,.08)',
+                    color: tablaEnabled ? '#001a16' : 'rgba(255,200,100,.7)',
+                    border: 'none', cursor: 'pointer', transition: 'all .15s'
+                  }}
+                >
+                  {tablaEnabled ? '● Playing' : '○ Off'}
+                </button>
+                <span style={{ fontSize: 10, color: 'rgba(255,200,100,.4)', transition: 'transform .2s', display: 'inline-block', transform: tablaExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+              </div>
+              {tablaExpanded && (
+                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <HUDRow label="Taal">
+                    <div className="flex bg-[#111] p-1 border border-white/10 rounded-full w-full overflow-x-auto whitespace-nowrap hide-scrollbars">
+                      {(Object.entries(TAALS) as Array<[keyof typeof TAALS, typeof TAALS[keyof typeof TAALS]]>).map(([key, taal]) => (
+                        <button key={key} onClick={() => { setTablaTaal(key); tablaStateRef.current.beat = 0; }}
+                          className={cn("px-2 py-0.5 text-[10px] rounded-full transition-colors flex-shrink-0",
+                            tablaTaal === key ? "bg-amber-500/80 text-amber-950 font-bold" : "text-white/50 hover:bg-white/10")}
+                        >{taal.name}</button>
+                      ))}
+                    </div>
+                  </HUDRow>
+                  <HUDRow label="Root">
+                    <div className="flex bg-[#111] p-1 border border-white/10 rounded-full w-full overflow-x-auto whitespace-nowrap hide-scrollbars">
+                      {WESTERN_NAMES.map((w, idx) => (
+                        <button key={'tbl-'+w} onClick={() => setTablaPitch(idx)}
+                          className={cn("px-2 py-0.5 text-[10px] rounded-full transition-colors flex-shrink-0",
+                            tablaPitch === idx ? "bg-amber-500/80 text-amber-950 font-bold" : "text-white/50 hover:bg-white/10")}
+                        >{w}</button>
+                      ))}
+                    </div>
+                  </HUDRow>
+                  <HUDRow label={`Vol ${Math.round(tablaVolume * 100)}%`}>
+                    <input type="range" min="0" max="1.5" step="0.05" value={tablaVolume}
+                      onChange={(e) => setTablaVolume(Number(e.target.value))} className="flex-1 accent-teal-500" />
+                  </HUDRow>
+                  <HUDRow label={`Speed ${tablaSpeed}`}>
+                    <input type="range" min="60" max="280" step="5" value={tablaSpeed}
+                      onChange={(e) => setTablaSpeed(Number(e.target.value))} className="flex-1 accent-amber-500" />
+                  </HUDRow>
+                </div>
+              )}
+            </div>
+
+            {/* ── Harmonium Controls ── */}
             <HUDRow label={`Octave Base · ${octaveOption.description}`}>
               {OCTAVE_OPTIONS.map((o) => (
                 <HUDChip key={o.value} active={octave === o.value} color="teal" onClick={() => setOctave(o.value)}>
@@ -1109,7 +1138,7 @@ export function ImmersiveHarmonium() {
               <button className="rounded-full w-7 h-7 flex items-center justify-center text-amber-300/80 hover:bg-white/10 transition" onClick={() => setTranspose((c) => Math.min(6, c + 1))}>+</button>
             </HUDRow>
             <HUDRow label={`Volume · ${Math.round(volume * 100)}%`}>
-              <input type="range" min="0.05" max="0.9" step="0.01" value={volume}
+              <input type="range" min="0.05" max="1.5" step="0.01" value={volume}
                 onChange={(e) => setVolume(Number(e.target.value))} className="flex-1 accent-amber-400" />
             </HUDRow>
             <HUDRow label="Reverb">
@@ -1125,11 +1154,6 @@ export function ImmersiveHarmonium() {
                   {o.label}
                 </HUDChip>
               ))}
-            </HUDRow>
-            <HUDRow label="Webcam Mirror">
-              <HUDChip active={showWebcam} color="amber" onClick={() => setShowWebcam(!showWebcam)}>
-                {showWebcam ? 'Active' : 'Off'}
-              </HUDChip>
             </HUDRow>
             <div className="text-[9px] text-amber-200/22 text-right mt-0.5">
               {playbackMode === 'samples' ? '🎵 Sample' : '🎹 Synth'} · 23 keys
