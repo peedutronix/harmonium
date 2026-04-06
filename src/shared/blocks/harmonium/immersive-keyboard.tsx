@@ -848,7 +848,8 @@ export function ImmersiveHarmonium() {
               {/* ── Copyright watermark over white keys ──────────────── */}
               <div style={{
                 position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+                paddingBottom: 'min(40px, 8vw)',
                 pointerEvents: 'none', userSelect: 'none', zIndex: 10,
               }}>
                 <span style={{
