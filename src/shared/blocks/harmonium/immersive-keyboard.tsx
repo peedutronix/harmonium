@@ -120,6 +120,14 @@ export function ImmersiveHarmonium() {
   const [tablaPitch, setTablaPitch] = useState(0);
   const [tablaExpanded, setTablaExpanded] = useState(false);
 
+  // ── Voice Monitor ────────────────────────────────────────────
+  const [micEnabled, setMicEnabled] = useState(false);
+  const [micVolume, setMicVolume] = useState(0.8);
+  const [micReverb, setMicReverb] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
+  const micNodesRef = useRef<{ source: MediaStreamAudioSourceNode; gain: GainNode; convolver?: ConvolverNode } | null>(null);
+
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
@@ -209,7 +217,7 @@ export function ImmersiveHarmonium() {
 
   // ── Coupler stops (like real harmonium tabs) ─────────────────────────
   const [couplerBass, setCouplerBass] = useState(false);
-  const [couplerMale, setCouplerMale] = useState(true);
+  const [couplerMale, setCouplerMale] = useState(false);
   const [couplerFemale, setCouplerFemale] = useState(false);
   const [couplerDrone, setCouplerDrone] = useState(false);
 
@@ -248,6 +256,83 @@ export function ImmersiveHarmonium() {
       if (stream) stream.getTracks().forEach((track) => track.stop());
     };
   }, [showWebcam]);
+
+  // ── Voice Monitor Effect ───────────────────────────────────────────
+  useEffect(() => {
+    if (!micEnabled) {
+      // Stop mic stream and disconnect all nodes
+      if (micStreamRef.current) {
+        micStreamRef.current.getTracks().forEach(t => t.stop());
+        micStreamRef.current = null;
+      }
+      if (micNodesRef.current) {
+        try { micNodesRef.current.source.disconnect(); } catch {}
+        try { micNodesRef.current.gain.disconnect(); } catch {}
+        try { micNodesRef.current.convolver?.disconnect(); } catch {}
+        micNodesRef.current = null;
+      }
+      setMicError(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }, video: false })
+      .then(async (stream) => {
+        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return; }
+        micStreamRef.current = stream;
+
+        // Bootstrap audio context if needed (first key press may not have done it yet)
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        // Reuse or create a dedicated mic context
+        const ctx = new AudioContextClass() as AudioContext;
+        if (ctx.state === 'suspended') await ctx.resume();
+
+        const source = ctx.createMediaStreamSource(stream);
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = micVolume;
+
+        if (micReverb) {
+          // Simple convolver reverb via noise buffer impulse
+          const convolver = ctx.createConvolver();
+          const rate = ctx.sampleRate;
+          const length = rate * 2;
+          const impulse = ctx.createBuffer(2, length, rate);
+          for (let ch = 0; ch < 2; ch++) {
+            const data = impulse.getChannelData(ch);
+            for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 3);
+          }
+          convolver.buffer = impulse;
+          source.connect(convolver);
+          convolver.connect(gainNode);
+          micNodesRef.current = { source, gain: gainNode, convolver };
+        } else {
+          source.connect(gainNode);
+          micNodesRef.current = { source, gain: gainNode };
+        }
+
+        gainNode.connect(ctx.destination);
+        setMicError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('Mic error:', err);
+        if (err.name === 'NotAllowedError') setMicError('Microphone permission denied.');
+        else if (err.name === 'NotFoundError') setMicError('No microphone found.');
+        else setMicError('Could not access microphone.');
+        setMicEnabled(false);
+      });
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [micEnabled, micReverb]);
+
+  // Sync mic gain live without restarting stream
+  useEffect(() => {
+    if (micNodesRef.current) micNodesRef.current.gain.gain.value = micVolume;
+  }, [micVolume]);
 
   const { activeNoteIds, playbackMode, startNote: baseStartNote, stopNote: baseStopNote, stopAllNotes, startMidiNote, stopMidiNote, getAudioContext, getGainNode } =
     useHarmoniumPlayer({ octave, transpose, volume, reverbEnabled, reedMode });
@@ -767,14 +852,15 @@ export function ImmersiveHarmonium() {
                 pointerEvents: 'none', userSelect: 'none', zIndex: 10,
               }}>
                 <span style={{
-                  fontSize: 'clamp(11px, 1.6vw, 22px)',
-                  fontWeight: 700,
+                  fontSize: 'clamp(14px, 2.5vw, 36px)',
+                  fontWeight: 800,
                   fontFamily: 'Georgia, serif',
-                  letterSpacing: '0.12em',
+                  letterSpacing: '0.15em',
                   textTransform: 'uppercase',
-                  color: 'rgba(30,20,5,0.22)',
+                  color: 'rgba(30,20,5,0.18)',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
+                  textShadow: '1px 1px 0px rgba(255,255,255,0.2)',
                 }}>
                   © Sudeep Regmi &nbsp;·&nbsp; 9849489310
                 </span>
@@ -1005,6 +1091,39 @@ export function ImmersiveHarmonium() {
               >
                 {showWebcam ? '📷 On' : '📷 Off'}
               </button>
+            </div>
+
+            {/* ── Voice Monitor ── */}
+            <div style={{
+              background: micEnabled ? 'rgba(34,197,94,.07)' : 'transparent',
+              borderRadius: 10, padding: '4px 6px',
+              border: micEnabled ? '1px solid rgba(34,197,94,.2)' : '1px solid transparent',
+              transition: 'all .2s'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 9, color: 'rgba(255,200,100,.5)', textTransform: 'uppercase', letterSpacing: '.1em', flex: 1 }}>Voice Monitor 🎤</span>
+                <button onClick={() => setMicEnabled(!micEnabled)} style={{
+                  fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                  background: micEnabled ? 'rgba(34,197,94,.85)' : 'rgba(255,255,255,.08)',
+                  color: micEnabled ? '#001a08' : 'rgba(255,200,100,.7)',
+                  border: 'none', cursor: 'pointer', transition: 'all .15s'
+                }}>
+                  {micEnabled ? '● Live' : '○ Off'}
+                </button>
+              </div>
+              {micError && <p style={{ fontSize: 8, color: '#f87171', marginTop: 3 }}>{micError}</p>}
+              {micEnabled && (
+                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <HUDRow label={`Mic Volume ${Math.round(micVolume * 100)}%`}>
+                    <input type="range" min="0" max="2" step="0.05" value={micVolume}
+                      onChange={(e) => setMicVolume(Number(e.target.value))} className="flex-1 accent-green-500" />
+                  </HUDRow>
+                  <HUDRow label="Mic Reverb">
+                    <HUDChip active={!micReverb} color="amber" onClick={() => setMicReverb(false)}>Dry</HUDChip>
+                    <HUDChip active={micReverb} color="teal" onClick={() => setMicReverb(true)}>Hall Echo</HUDChip>
+                  </HUDRow>
+                </div>
+              )}
             </div>
 
             {/* ── Keyboard Labels ── */}
