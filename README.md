@@ -46,8 +46,7 @@ Most people searching for an online harmonium want to start playing right away, 
 
 ## Deployment
 
-- Production domain: [playharmonium.com](https://playharmonium.com)
-- GitHub repository: [bikai9289/Harmonium](https://github.com/bikai9289/Harmonium)
+
 - Recommended hosting: Vercel
 
 ## Docs

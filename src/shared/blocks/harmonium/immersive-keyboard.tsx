@@ -34,6 +34,14 @@ export const TAALS = {
   dadra: { name: 'Dadra (6)', beats: 6, pattern: ['dha', 'dhin', 'na', 'dha', 'tin', 'na'] }
 } as const;
 
+export const RAGAS = [
+  { name: 'Bilaval', intervals: [0, 2, 4, 5, 7, 9, 11] }, // All natural
+  { name: 'Yaman',   intervals: [0, 2, 4, 6, 7, 9, 11] }, // Sharp Ma (#4)
+  { name: 'Bhairav', intervals: [0, 1, 4, 5, 7, 8, 11] }, // Flat Re, Dha (b2, b6)
+  { name: 'Kafi',    intervals: [0, 2, 3, 5, 7, 9, 10] }, // Flat Ga, Ni (b3, b7)
+  { name: 'Bhupali', intervals: [0, 2, 4, 7, 9] },       // Pentatonic: Sa Re Ga Pa Dha
+];
+
 function playTablaStroke(context: AudioContext, dest: AudioNode, stroke: string, rootFreq: number) {
   const t = context.currentTime;
   
@@ -119,6 +127,10 @@ export function ImmersiveHarmonium() {
   const [tablaSpeed, setTablaSpeed] = useState(160);
   const [tablaPitch, setTablaPitch] = useState(0);
   const [tablaExpanded, setTablaExpanded] = useState(false);
+
+  // ── Raga Suggestions ─────────────────────────────────────────
+  const [selectedRaga, setSelectedRaga] = useState<string | null>(null);
+  const [ragaExpanded, setRagaExpanded] = useState(false);
 
   // ── Voice Monitor ────────────────────────────────────────────
   const [micEnabled, setMicEnabled] = useState(false);
@@ -502,31 +514,41 @@ export function ImmersiveHarmonium() {
 
   const suggestedKeys = useMemo(() => {
     const suggestions = new Set<string>();
-    if (chordMode === 'off' || activeNoteIds.length === 0) return suggestions;
-
-    const validPitchClasses = new Set<number>();
-    activeNoteIds.forEach(id => {
-      const noteDef = NOTE_KEYS.find(n => n.id === id);
-      if (noteDef) {
-        const rootPc = noteDef.midi % 12;
-        if (chordMode === 'major') {
-          validPitchClasses.add((rootPc + 4) % 12);
-          validPitchClasses.add((rootPc + 7) % 12);
-        } else if (chordMode === 'minor') {
-          validPitchClasses.add((rootPc + 3) % 12);
-          validPitchClasses.add((rootPc + 7) % 12);
+    
+    // 1. Chord suggestions
+    if (chordMode !== 'off' && activeNoteIds.length > 0) {
+      const validPitchClasses = new Set<number>();
+      activeNoteIds.forEach(id => {
+        const noteDef = NOTE_KEYS.find(n => n.id === id);
+        if (noteDef) {
+          const rootPc = noteDef.midi % 12;
+          if (chordMode === 'major') {
+            validPitchClasses.add((rootPc + 4) % 12);
+            validPitchClasses.add((rootPc + 7) % 12);
+          } else if (chordMode === 'minor') {
+            validPitchClasses.add((rootPc + 3) % 12);
+            validPitchClasses.add((rootPc + 7) % 12);
+          }
         }
-      }
-    });
+      });
+      NOTE_KEYS.forEach(n => {
+        if (validPitchClasses.has(n.midi % 12)) suggestions.add(n.id);
+      });
+    }
 
-    NOTE_KEYS.forEach(n => {
-      if (validPitchClasses.has(n.midi % 12)) {
-        suggestions.add(n.id);
+    // 2. Raga suggestions
+    if (selectedRaga) {
+      const raga = RAGAS.find(r => r.name === selectedRaga);
+      if (raga) {
+        const ragaPitchClasses = new Set(raga.intervals.map(i => (i + sargamOffset) % 12));
+        NOTE_KEYS.forEach(n => {
+          if (ragaPitchClasses.has(n.midi % 12)) suggestions.add(n.id);
+        });
       }
-    });
+    }
 
     return suggestions;
-  }, [activeNoteIds, chordMode]);
+  }, [activeNoteIds, chordMode, selectedRaga, sargamOffset]);
 
   const whiteKeys = NOTE_KEYS.filter((n) => n.kind === 'white');
   const blackKeys = NOTE_KEYS.filter((n) => n.kind === 'black');
@@ -1105,8 +1127,8 @@ export function ImmersiveHarmonium() {
                 <span style={{ fontSize: 9, color: 'rgba(255,200,100,.5)', textTransform: 'uppercase', letterSpacing: '.1em', flex: 1 }}>Voice Monitor 🎤</span>
                 <button onClick={() => setMicEnabled(!micEnabled)} style={{
                   fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
-                  background: micEnabled ? 'rgba(34,197,94,.85)' : 'rgba(255,255,255,.08)',
-                  color: micEnabled ? '#001a08' : 'rgba(255,200,100,.7)',
+                  background: micEnabled ? 'rgba(34,197,94,.85)' : 'rgba(34,197,94,.15)',
+                  color: micEnabled ? '#001a08' : 'rgba(34,197,94,.8)',
                   border: 'none', cursor: 'pointer', transition: 'all .15s'
                 }}>
                   {micEnabled ? '● Live' : '○ Off'}
@@ -1123,6 +1145,38 @@ export function ImmersiveHarmonium() {
                     <HUDChip active={!micReverb} color="amber" onClick={() => setMicReverb(false)}>Dry</HUDChip>
                     <HUDChip active={micReverb} color="teal" onClick={() => setMicReverb(true)}>Hall Echo</HUDChip>
                   </HUDRow>
+                </div>
+              )}
+            </div>
+
+            {/* ── Raga Suggestions ── */}
+            <div style={{
+              background: selectedRaga ? 'rgba(245,158,11,.07)' : 'transparent',
+              borderRadius: 10, padding: '4px 6px',
+              border: selectedRaga ? '1px solid rgba(245,158,11,.2)' : '1px solid rgba(255,160,50,.08)',
+              transition: 'all .2s'
+            }}>
+              <div 
+                onClick={() => setRagaExpanded(!ragaExpanded)}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                <span style={{ fontSize: 9, color: 'rgba(255,200,100,.5)', textTransform: 'uppercase', letterSpacing: '.1em', flex: 1 }}>Raga Suggestions ▾</span>
+                {selectedRaga && (
+                  <span style={{ fontSize: 9, fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>{selectedRaga}</span>
+                )}
+              </div>
+              {ragaExpanded && (
+                <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                  <HUDChip active={selectedRaga === null} color="amber" onClick={() => setSelectedRaga(null)}>Off</HUDChip>
+                  {RAGAS.map(r => (
+                    <HUDChip 
+                      key={r.name} 
+                      active={selectedRaga === r.name} 
+                      color="teal" 
+                      onClick={() => setSelectedRaga(r.name)}
+                    >
+                      {r.name}
+                    </HUDChip>
+                  ))}
                 </div>
               )}
             </div>
